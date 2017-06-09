@@ -11,7 +11,7 @@ public class AudioManager : MonoBehaviour {
 		AudioSource[] sources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
 		foreach (AudioSource source in sources)
         {
-            sounds.Add(source.name, source.clip);
+            //sounds.Add(source.name, source.clip);
             Debug.Log(source.name);
         }
 
