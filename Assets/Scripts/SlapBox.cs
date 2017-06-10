@@ -5,6 +5,7 @@ using UnityEngine;
 public class SlapBox : MonoBehaviour {
 	private MainController _controller;
 	private bool _isSlapping = false;
+	private int _collisionCount = 0;
 	//private Stack<float> _distances = new Stack<float>(20);
 	private Queue<float> _distances = new Queue<float>();
 	private Vector3 _lastPos;
@@ -42,17 +43,19 @@ public class SlapBox : MonoBehaviour {
 
 	//
 	private void OnCollisionEnter(Collision collision) {
-		Debug.Log(collision.gameObject.name);
-		if(collision.gameObject.GetComponent<Slappable>() && !_isSlapping){
-			_controller.OnSlap(this, curMeanDist);
-			_isSlapping = true;
+		//Debug.Log(collision.gameObject.name);
+		if(collision.gameObject.GetComponent<Slappable>()){
+			if(_collisionCount == 0) {
+				_controller.OnSlap(this, curMeanDist);
+			}
+			_collisionCount++;
 		}
 	}
 
 	//
 	private void OnCollisionExit(Collision collision) {
-		if(collision.gameObject.GetComponent<Slappable>() && _isSlapping){
-			_isSlapping = false;
+		if(collision.gameObject.GetComponent<Slappable>()){
+			_collisionCount--;
 		}
 	}
 

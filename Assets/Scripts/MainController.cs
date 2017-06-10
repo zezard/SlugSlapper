@@ -30,7 +30,7 @@ public class MainController : MonoBehaviour {
 
 	//
 	public void OnSlap(SlapBox sb, float power) {
-		if(power < 0.02) {
+		if(power > 0.01 && power < 0.02) {
 			sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
 			CreateFeedback(sb.transform.position, "Tap");
 		} else {
