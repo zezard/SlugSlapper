@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MainController : MonoBehaviour {
 	public ScoreManager scoreManager;
+	public Text timerText;
 
 	private const int TAP_SCORE = 300;
 	private const int SLAP_SCORE = 500;
@@ -32,8 +33,14 @@ public class MainController : MonoBehaviour {
 	public float slapThresh = 0.5f;
 	public float slapDelay = .2f;
 
+	private float timeSinceFirstSlap = 0.0f;
+	private bool hasSlappingStarted = false;
+	private const float MAX_SLAPPING_TIME = 30.0f;
+
 	public float intensity = 0f;
 	private int _curIntesityLevel = 0;
+
+	private bool isGameOver = false;
 
 	//
 	void Awake() {
@@ -48,8 +55,9 @@ public class MainController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		stateTimer += Time.deltaTime;
-		switch(gameState) {
+
+			stateTimer += Time.deltaTime;
+			switch(gameState) {
 			case GameState.Start:
 				if(stateTimer >= 2) {
 					gameState = GameState.StoryMode;
@@ -71,6 +79,9 @@ public class MainController : MonoBehaviour {
 				}
 				break;
 			case GameState.Playing:
+				if (isGameOver) {
+					gameState = GameState.GameOver;
+				}
 				UpdatePlaying();
 				//if(stateTimer >= 18) {
 				//	gameState = GameState.Delay;
@@ -84,6 +95,14 @@ public class MainController : MonoBehaviour {
 
 	//
 	public void OnSlap(SlapBox sb, float power) {
+		if (timeSinceFirstSlap > MAX_SLAPPING_TIME) {
+			return;
+		}
+
+		if (!hasSlappingStarted) {
+			hasSlappingStarted = true;
+		}
+
 
 		if(intensity < 6) {
 			intensity += power * 10;
@@ -92,12 +111,12 @@ public class MainController : MonoBehaviour {
 		if(power > tapThresh && power < slapThresh) {
 			sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlayPatSound();
 			CreateFeedback(sb.transform.position, "Tappety");
-			scoreManager.AddScore ((int)(100 * power * TAP_SCORE));
+			scoreManager.AddScore ((int)(100 * power * TAP_SCORE + _curIntesityLevel * 500.0f));
 			//sb.transform.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
 		} else if(power > slapThresh){
 			sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
 			CreateFeedback(sb.transform.position, "Slappety Slap!");
-			scoreManager.AddScore ((int)(100 * power * SLAP_SCORE));
+			scoreManager.AddScore ((int)(100 * power * SLAP_SCORE + _curIntesityLevel * 1000.0f));
 			//sb.transform.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
 		}
 	}
@@ -133,6 +152,20 @@ public class MainController : MonoBehaviour {
 		} else if(intensity >= 5 && _curIntesityLevel != 2) {
 			_audioMgr.SwitchSongLayer(2);
 			_curIntesityLevel = 2;
+		}
+
+		UpdateSlapTime ();
+	}
+
+	private void UpdateSlapTime() {
+		if (hasSlappingStarted) {
+			timeSinceFirstSlap += Time.deltaTime;
+
+			if (timeSinceFirstSlap >= MAX_SLAPPING_TIME) {
+				isGameOver = true;
+			}
+
+			timerText.text = ((int)(MAX_SLAPPING_TIME - timeSinceFirstSlap)).ToString();
 		}
 	}
 
