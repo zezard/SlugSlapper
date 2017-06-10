@@ -15,6 +15,7 @@
 *.DS_Store
 *.sublime-project
 *.sublime-workspace
+!*.dll
 
 # Don't commit builds, put them in Builds
 [Bb]uilds/
