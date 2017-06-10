@@ -29,9 +29,14 @@ public class MainController : MonoBehaviour {
 	}
 
 	//
-	public void OnSlap(SlapBox sb) {
-		sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
-		CreateFeedback(sb.transform.position, "Slappety Slap!");
+	public void OnSlap(SlapBox sb, float power) {
+		if(power < 0.02) {
+			sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
+			CreateFeedback(sb.transform.position, "Tap");
+		} else {
+			sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
+			CreateFeedback(sb.transform.position, "Slappety Slap!");
+		}
 	}
 
 	//
