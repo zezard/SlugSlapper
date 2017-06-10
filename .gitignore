@@ -16,6 +16,7 @@
 *.sublime-project
 *.sublime-workspace
 !*.dll
+!*.obj
 
 # Don't commit builds, put them in Builds
 [Bb]uilds/
