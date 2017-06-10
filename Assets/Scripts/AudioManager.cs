@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour {
     public Dictionary<string, AudioClip> sounds;
 	public SlapSoundbox slapSB1;
 	public SlapSoundbox slapSB2;
+	public AudioSource storySound;
 
 	//
 	void Awake() {
@@ -44,5 +45,10 @@ public class AudioManager : MonoBehaviour {
 	//
 	public void SwitchSongLayer(int layer) {
 		grumble.CrossFadeToNewLayer(layer);
+	}
+
+	//
+	public void PlayStory() {
+		storySound.Play();
 	}
 }
