@@ -12,6 +12,7 @@ public class MainController : MonoBehaviour {
 	private AudioManager _audioMgr;
 
 	public GameObject slapFeedbackPref;
+	public Transform playerHeadTransform;
 	public SlapBox debugSlapper;
 
 	//
