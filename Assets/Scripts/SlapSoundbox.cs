@@ -18,7 +18,7 @@ public class SlapSoundbox : MonoBehaviour {
 	//
 	public void PlaySlapSound() {
 		int index = Random.Range(0, slapSounds.Count);
-		Debug.Log("playing slap sound " + index);
+		//Debug.Log("playing slap sound " + index);
 		slapSounds[index].Play();
 	}
 }

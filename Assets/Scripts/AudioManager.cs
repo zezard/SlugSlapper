@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour {
 		return _instance;
 	}
 
+	public grumbleAMP grumble;
     public Dictionary<string, AudioClip> sounds;
 	public SlapSoundbox slapSB1;
 	public SlapSoundbox slapSB2;
@@ -15,14 +16,14 @@ public class AudioManager : MonoBehaviour {
 	//
 	void Awake() {
 		_instance = this;
+		grumble = GetComponent<grumbleAMP>();
 	}
 
 	// Use this for initialization
 	void Start () {
         sounds = new Dictionary<string, AudioClip>();
 		AudioSource[] sources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
-		foreach (AudioSource source in sources)
-        {
+		foreach (AudioSource source in sources) {
             //sounds.Add(source.name, source.clip);
             //Debug.Log(source.name, source.gameObject);
         }
@@ -33,5 +34,15 @@ public class AudioManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	//
+	public void PlaySong(int song, int layer) {
+		grumble.PlaySong(song, layer);
+	}
+
+	//
+	public void SwitchSongLayer(int layer) {
+		grumble.CrossFadeToNewLayer(layer);
 	}
 }

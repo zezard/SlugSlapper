@@ -19,9 +19,6 @@ public class SlapBox : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetKeyDown("k")) {
-			_controller.OnSlap(this, 0);
-		}
 		if(_lastPos == null) {
 			_lastPos = transform.position;
 		}
