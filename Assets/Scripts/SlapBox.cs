@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SlapBox : MonoBehaviour {
 	private MainController _controller;
+	private bool _isSlapping = false;
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +20,17 @@ public class SlapBox : MonoBehaviour {
 
 	//
 	private void OnCollisionEnter(Collision collision) {
-		_controller.OnSlap(this);
+		if(collision.gameObject.GetComponent<Slappable>() && !_isSlapping){
+			_controller.OnSlap(this);
+			_isSlapping = true;
+		}
+	}
+
+	//
+	private void OnCollisionExit(Collision collision) {
+		if(collision.gameObject.GetComponent<Slappable>() && _isSlapping){
+			_isSlapping = false;
+		}
 	}
 
 	//

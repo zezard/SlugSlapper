@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainController : MonoBehaviour {
 	private static MainController _instance;
@@ -9,6 +10,8 @@ public class MainController : MonoBehaviour {
 	}
 
 	private AudioManager _audioMgr;
+
+	public GameObject slapFeedbackPref;
 
 	//
 	void Awake() {
@@ -28,5 +31,13 @@ public class MainController : MonoBehaviour {
 	//
 	public void OnSlap(SlapBox sb) {
 		sb.transform.parent.GetComponentInChildren<SlapSoundbox>().PlaySlapSound();
+		CreateFeedback(sb.transform.position, "Slappety Slap!");
+	}
+
+	//
+	public void CreateFeedback(Vector3 pos, string text) {
+		GameObject newSlapFB = Instantiate(slapFeedbackPref);
+		newSlapFB.transform.position = pos;
+		newSlapFB.GetComponentInChildren<Text>().text = text;
 	}
 }
