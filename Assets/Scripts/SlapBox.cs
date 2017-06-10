@@ -5,6 +5,7 @@ using UnityEngine;
 public class SlapBox : MonoBehaviour {
 	private MainController _controller;
 	private bool _isSlapping = false;
+	private Stack<float> _distances = new Stack<float>();
 
 	// Use this for initialization
 	void Start () {
@@ -20,6 +21,7 @@ public class SlapBox : MonoBehaviour {
 
 	//
 	private void OnCollisionEnter(Collision collision) {
+		Debug.Log(collision.gameObject.name);
 		if(collision.gameObject.GetComponent<Slappable>() && !_isSlapping){
 			_controller.OnSlap(this);
 			_isSlapping = true;
