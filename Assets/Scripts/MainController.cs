@@ -22,6 +22,12 @@ public class MainController : MonoBehaviour {
 	public Transform playerHeadTransform;
 	public SlapBox debugSlapper;
 
+	public Animator cameraAnimator;
+
+	public enum GameState { Start, StoryMode, Delay, Fading, Playing, GameOver };
+	public GameState gameState = GameState.Start;
+	public float stateTimer;
+
 	public int powerSampleCount = 20;
 	public float tapThresh = 0.3f;
 	public float slapThresh = 0.5f;
@@ -44,50 +50,46 @@ public class MainController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		_audioMgr = AudioManager.GetInstance();
-		_audioMgr.PlaySong(0, 0);
+		//_audioMgr.PlaySong(0, 0);
 	}
 
 	// Update is called once per frame
 	void Update() {
-		if (!isGameOver) {
-			if (Input.GetKeyDown ("1")) {
-				_audioMgr.SwitchSongLayer (0);
-			}
-			if (Input.GetKeyDown ("2")) {
-				_audioMgr.SwitchSongLayer (1);
-			}
-			if (Input.GetKeyDown ("3")) {
-				_audioMgr.SwitchSongLayer (2);
-			}
 
-
-			if (Input.GetKeyDown ("k")) {
-				OnSlap (debugSlapper, 0.3f);
-			}
-
-			if (intensity > 0) {
-				intensity -= Time.deltaTime;
-			}
-			if (intensity < 1 && _curIntesityLevel != 0) {
-				_audioMgr.SwitchSongLayer (0);
-				_curIntesityLevel = 0;
-			} else if (intensity >= 2 && intensity < 5 && _curIntesityLevel != 1) {
-				_audioMgr.SwitchSongLayer (1);
-				_curIntesityLevel = 1;
-			} else if (intensity >= 5 && _curIntesityLevel != 2) {
-				_audioMgr.SwitchSongLayer (2);
-				_curIntesityLevel = 2;
-			}
-
-			if (hasSlappingStarted) {
-				timeSinceFirstSlap += Time.deltaTime;
-
-				if (timeSinceFirstSlap >= MAX_SLAPPING_TIME) {
-					isGameOver = true;
+			stateTimer += Time.deltaTime;
+			switch(gameState) {
+			case GameState.Start:
+				if(stateTimer >= 2) {
+					gameState = GameState.StoryMode;
+					_audioMgr.PlayStory();
+					stateTimer = 0;
 				}
-
-				timerText.text = ((int)(MAX_SLAPPING_TIME - timeSinceFirstSlap)).ToString();
-			}
+				break;
+			case GameState.StoryMode:
+				if(stateTimer >= 18) {
+					gameState = GameState.Delay;
+					stateTimer = 0;
+				}
+				break;
+			case GameState.Fading:
+				if(stateTimer >= 2) {
+					gameState = GameState.Fading;
+					cameraAnimator.Play("FadeIn");
+					stateTimer = 0;
+				}
+				break;
+			case GameState.Playing:
+				if (isGameOver) {
+					gameState = GameState.GameOver;
+				}
+				UpdatePlaying();
+				//if(stateTimer >= 18) {
+				//	gameState = GameState.Delay;
+				//	stateTimer = 0;
+				//}
+				break;
+			case GameState.GameOver:
+				break;
 		}
 	}
 
@@ -120,9 +122,68 @@ public class MainController : MonoBehaviour {
 	}
 
 	//
+	public void OnAnimationOver() {
+		switch(gameState) {
+			case GameState.Fading:
+				gameState = GameState.Playing;
+				stateTimer = 0;
+				break;
+		}
+	}
+
+	//
 	public void CreateFeedback(Vector3 pos, string text) {
 		GameObject newSlapFB = Instantiate(slapFeedbackPref);
 		newSlapFB.transform.position = pos;
 		newSlapFB.GetComponentInChildren<Text>().text = text;
+	}
+
+	//
+	public void UpdatePlaying() {
+		if(intensity > 0) {
+			intensity -= Time.deltaTime;
+		}
+		if(intensity < 1 && _curIntesityLevel != 0) {
+			_audioMgr.SwitchSongLayer(0);
+			_curIntesityLevel = 0;
+		} else if(intensity >= 2 && intensity < 5 && _curIntesityLevel != 1) {
+			_audioMgr.SwitchSongLayer(1);
+			_curIntesityLevel = 1;
+		} else if(intensity >= 5 && _curIntesityLevel != 2) {
+			_audioMgr.SwitchSongLayer(2);
+			_curIntesityLevel = 2;
+		}
+
+		UpdateSlapTime ();
+	}
+
+	private void UpdateSlapTime() {
+		if (hasSlappingStarted) {
+			timeSinceFirstSlap += Time.deltaTime;
+
+			if (timeSinceFirstSlap >= MAX_SLAPPING_TIME) {
+				isGameOver = true;
+			}
+
+			timerText.text = ((int)(MAX_SLAPPING_TIME - timeSinceFirstSlap)).ToString();
+		}
+	}
+
+	//
+	public void UpdateDebug() {
+		if(Input.GetKeyDown("1")) {
+			_audioMgr.SwitchSongLayer(0);
+		}
+		if(Input.GetKeyDown("2")) {
+			_audioMgr.SwitchSongLayer(1);
+		}
+		if(Input.GetKeyDown("3")) {
+			_audioMgr.SwitchSongLayer(2);
+		}
+
+
+		if(Input.GetKeyDown("k")) {
+			OnSlap(debugSlapper, 0.3f);
+		}
 	}
 }
