@@ -55,9 +55,8 @@ public class MainController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-
-			stateTimer += Time.deltaTime;
-			switch(gameState) {
+		stateTimer += Time.deltaTime;
+		switch(gameState) {
 			case GameState.Start:
 				if(stateTimer >= 2) {
 					gameState = GameState.StoryMode;
@@ -66,16 +65,17 @@ public class MainController : MonoBehaviour {
 				}
 				break;
 			case GameState.StoryMode:
-				if(stateTimer >= 18) {
+				if(stateTimer >= 2) {
 					gameState = GameState.Delay;
 					stateTimer = 0;
 				}
 				break;
-			case GameState.Fading:
+			case GameState.Delay:
 				if(stateTimer >= 2) {
 					gameState = GameState.Fading;
 					cameraAnimator.Play("FadeIn");
 					stateTimer = 0;
+					_audioMgr.PlaySong(0, 0);
 				}
 				break;
 			case GameState.Playing:
@@ -125,6 +125,7 @@ public class MainController : MonoBehaviour {
 	public void OnAnimationOver() {
 		switch(gameState) {
 			case GameState.Fading:
+				
 				gameState = GameState.Playing;
 				stateTimer = 0;
 				break;
