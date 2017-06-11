@@ -65,7 +65,7 @@ public class MainController : MonoBehaviour {
 				}
 				break;
 			case GameState.StoryMode:
-				if(stateTimer >= 2) {
+				if(stateTimer >= 18) {
 					gameState = GameState.Delay;
 					stateTimer = 0;
 				}
