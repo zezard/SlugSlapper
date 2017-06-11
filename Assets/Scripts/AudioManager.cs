@@ -51,4 +51,10 @@ public class AudioManager : MonoBehaviour {
 	public void PlayStory() {
 		storySound.Play();
 	}
+
+	//
+	public void Stop() {
+		grumble.StopAll();
+		storySound.Stop();
+	}
 }

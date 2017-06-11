@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainController : MonoBehaviour {
@@ -24,7 +25,7 @@ public class MainController : MonoBehaviour {
 
 	public Animator cameraAnimator;
 
-	public enum GameState { Start, StoryMode, Delay, Fading, Playing, GameOver };
+	public enum GameState { Start, StoryMode, Delay, Fading, Playing, GameOver, DarkIdle };
 	public GameState gameState = GameState.Start;
 	public float stateTimer;
 
@@ -56,6 +57,7 @@ public class MainController : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		stateTimer += Time.deltaTime;
+		UpdateDebug();
 		switch(gameState) {
 			case GameState.Start:
 				if(stateTimer >= 2) {
@@ -95,7 +97,8 @@ public class MainController : MonoBehaviour {
 
 	//
 	public void OnSlap(SlapBox sb, float power) {
-		if (timeSinceFirstSlap > MAX_SLAPPING_TIME) {
+		//if (timeSinceFirstSlap > MAX_SLAPPING_TIME) {
+		if(gameState == GameState.Playing){
 			return;
 		}
 
@@ -170,17 +173,51 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
+	public void SetState(GameState newState) {
+		stateTimer = 0;
+		gameState = newState;
+
+		switch(gameState) {
+			case GameState.Start:
+				cameraAnimator.Play("DarkIdle");
+				_audioMgr.Stop();
+				timeSinceFirstSlap = 0;
+				intensity = 0;
+				scoreManager.Reset();
+				break;
+			case GameState.Playing:
+				cameraAnimator.Play("FadeIn");
+				_audioMgr.Stop();
+				_audioMgr.PlaySong(0, 0);
+				timeSinceFirstSlap = 0;
+				intensity = 0;
+				scoreManager.Reset();
+				break;
+			case GameState.DarkIdle:
+				cameraAnimator.Play("DarkIdle");
+				_audioMgr.Stop();
+				timeSinceFirstSlap = 0;
+				intensity = 0;
+				scoreManager.Reset();
+				break;
+		}
+	}
+
 	//
 	public void UpdateDebug() {
 		if(Input.GetKeyDown("1")) {
-			_audioMgr.SwitchSongLayer(0);
+			SetState(GameState.Start);
 		}
 		if(Input.GetKeyDown("2")) {
-			_audioMgr.SwitchSongLayer(1);
+			SetState(GameState.Playing);
 		}
 		if(Input.GetKeyDown("3")) {
-			_audioMgr.SwitchSongLayer(2);
+			SetState(GameState.DarkIdle);
 		}
+		if(Input.GetKeyDown("4")) {
+			SceneManager.LoadScene("MainScene");
+		}
+
 
 
 		if(Input.GetKeyDown("k")) {

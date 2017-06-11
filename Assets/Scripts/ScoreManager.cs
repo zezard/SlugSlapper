@@ -39,4 +39,8 @@ public class ScoreManager : MonoBehaviour {
 		scoreText.text = score.ToString();
 	}
 
+	public void Reset() {
+		score = 0;
+	}
+
 }
