@@ -97,8 +97,9 @@ public class MainController : MonoBehaviour {
 
 	//
 	public void OnSlap(SlapBox sb, float power) {
-		//if (timeSinceFirstSlap > MAX_SLAPPING_TIME) {
-		if(gameState == GameState.Playing){
+		Debug.Log("onslap");
+		if (timeSinceFirstSlap > MAX_SLAPPING_TIME) {
+		//if(gameState == GameState.Playing){
 			return;
 		}
 
@@ -184,6 +185,7 @@ public class MainController : MonoBehaviour {
 				timeSinceFirstSlap = 0;
 				intensity = 0;
 				scoreManager.Reset();
+				isGameOver = false;
 				break;
 			case GameState.Playing:
 				cameraAnimator.Play("FadeIn");
@@ -191,6 +193,7 @@ public class MainController : MonoBehaviour {
 				_audioMgr.PlaySong(0, 0);
 				timeSinceFirstSlap = 0;
 				intensity = 0;
+				isGameOver = false;
 				scoreManager.Reset();
 				break;
 			case GameState.DarkIdle:
@@ -198,6 +201,7 @@ public class MainController : MonoBehaviour {
 				_audioMgr.Stop();
 				timeSinceFirstSlap = 0;
 				intensity = 0;
+				isGameOver = false;
 				scoreManager.Reset();
 				break;
 		}
